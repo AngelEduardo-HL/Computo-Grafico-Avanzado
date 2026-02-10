@@ -1,0 +1,4 @@
+C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/CMakeFiles/ALL_BUILD.dir
+C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/CMakeFiles/ZERO_CHECK.dir
+C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/src/CMakeFiles/glfw.dir
+C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/src/CMakeFiles/update_mappings.dir

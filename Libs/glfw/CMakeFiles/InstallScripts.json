@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/cmake_install.cmake",
+		"C:/Users/Lalo/Documents/ComputoGrafico_AngelEduardo_17867/Libs/glfw/src/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

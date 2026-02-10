@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Lalo\Documents\ComputoGrafico_AngelEduardo_17867\Libs\glfw\CMakeFiles\55df169a49169cdae9006178a884dc15\update_mappings.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Lalo\Documents\ComputoGrafico_AngelEduardo_17867\Libs\glfw\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Lalo\Documents\ComputoGrafico_AngelEduardo_17867\Libs\glfw\src\mappings.h.in">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\Users\Lalo\Documents\ComputoGrafico_AngelEduardo_17867\Libs\glfw\CMake\GenerateMappings.cmake" />
+    <None Include="C:\Users\Lalo\Documents\ComputoGrafico_AngelEduardo_17867\Libs\glfw\src\CMakeFiles\update_mappings" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{A40154C1-771E-372F-8E08-E17A32C7922C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{82B8654E-62BB-3069-9857-0ABF8EB9C667}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
