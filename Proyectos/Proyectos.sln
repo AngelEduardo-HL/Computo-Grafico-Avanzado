@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Phong", "Phong\Phong.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ADS", "ADS\ADS.vcxproj", "{7275B995-19A7-4263-9C84-F8BA2B1ABE33}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture", "Texture\Texture.vcxproj", "{C709BB9A-348D-4446-8219-5888FFB18BCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{7275B995-19A7-4263-9C84-F8BA2B1ABE33}.Release|x64.Build.0 = Release|x64
 		{7275B995-19A7-4263-9C84-F8BA2B1ABE33}.Release|x86.ActiveCfg = Release|Win32
 		{7275B995-19A7-4263-9C84-F8BA2B1ABE33}.Release|x86.Build.0 = Release|Win32
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Debug|x64.ActiveCfg = Debug|x64
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Debug|x64.Build.0 = Debug|x64
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Debug|x86.ActiveCfg = Debug|Win32
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Debug|x86.Build.0 = Debug|Win32
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x64.ActiveCfg = Release|x64
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x64.Build.0 = Release|x64
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x86.ActiveCfg = Release|Win32
+		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
