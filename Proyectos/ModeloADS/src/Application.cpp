@@ -64,18 +64,6 @@ void Application::keyCallback(int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	a
-		daw
-		faw
-		 
-		a
-		aw
-		d
-		a
-		daw
-		d
-		ad
-	//teclas para mover	
 }
 
 void Application::setup()
@@ -103,7 +91,7 @@ void Application::setup()
 
 void Application::update()
 {
-	time += 0.001f;
+	time += 0.01f;
 
 	// Camara
 	eye = glm::vec3(0.0f, 2.0f, 2.0f);

@@ -139,10 +139,8 @@
     <ClCompile Include="src\ShaderFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\FragmentCamera.glsl" />
-    <None Include="shaders\FragmentShader.glsl" />
-    <None Include="shaders\VertexCamera.glsl" />
-    <None Include="shaders\VertexShader.glsl" />
+    <None Include="shaders\FragmentTexture.glsl" />
+    <None Include="shaders\VertexTexture.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

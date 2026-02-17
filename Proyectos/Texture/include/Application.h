@@ -20,6 +20,7 @@ private:
 	void setupProgram();
 	GLuint setupTexture(const std::string& path);
 	float time{ 0.0f };
+	glm::mat4 model;
 	glm::mat4 camera;
 	glm::mat4 projection;
 	glm::vec3 eye{0.0f, 0.0f, 2.0f};

@@ -42,15 +42,14 @@ void Application::setupGeometry()
 
 void Application::setupProgram()
 {
-	std::string vertexShader = loadTextFile("shaders/VertexCamera.glsl");
-	std::string fragmentShader = loadTextFile("shaders/FragmentCamera.glsl");
+	std::string vertexShader = loadTextFile("shaders/VertexTexture.glsl");
+	std::string fragmentShader = loadTextFile("shaders/FragmentTexture.glsl");
 	ids["program"] = InitializeProgram(vertexShader, fragmentShader);
-	ids["time"] = glGetUniformLocation(ids["program"], "time");
+	//ids["time"] = glGetUniformLocation(ids["program"], "time");
+	ids["model"] = glGetUniformLocation(ids["program"], "model");
 	ids["camera"] = glGetUniformLocation(ids["program"], "camera");
 	ids["projection"] = glGetUniformLocation(ids["program"], "projection");
-	ids["amplitude"] = glGetUniformLocation(ids["program"], "amplitude");
-	ids["phase"] = glGetUniformLocation(ids["program"], "phase");
-	ids["frecuency"] = glGetUniformLocation(ids["program"], "frecuency");
+	ids["texture"] = glGetUniformLocation(ids["program"], "texture0");
 }
 
 GLuint Application::setupTexture(const std::string& path)
@@ -70,16 +69,19 @@ GLuint Application::setupTexture(const std::string& path)
 
 	stbi_image_free(img);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return texID;
 }
+
+//Ejercicio: Cargar dos imagenes y que conforme el scroll del mouse se vaya poco a poco mostrando una u otra
 
 void Application::keyCallback(int key, int scancode, int action, int mods)
 {
@@ -94,14 +96,19 @@ void Application::setup()
 	setupGeometry();
 	setupProgram();
 	ids["jeff"] = setupTexture("Textures/Epstein.png");
-	projection = glm::perspective(glm::radians(45.0f), 1024.0f / 768.0f, 0.1f, 100.0f);
 }
 
 void Application::update()
 {
-	time += 0.1f;
-	eye = glm::vec3(0.0f, 2.0f, 2.0f);
-	camera = glm::lookAt(eye, center, glm::vec3(0.0f, 1.0f, 0.0f));
+	time += 0.01f;
+
+	eye = glm::vec3(0.0f, 2.0f + cos(time), 2.0f + cos(time));
+	center = glm::vec3(0.01f, 0.01f, 0.01f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	camera = glm::lookAt(eye, center, up);
+
+	model = glm::identity<glm::mat4>();
+	projection = glm::perspective(glm::radians(45.0f), (1024.0f / 768.0f), 0.1f, 100.0f);
 }
 
 void Application::draw()
@@ -110,21 +117,22 @@ void Application::draw()
 	glUseProgram(ids["program"]);
 
 	//Pasar el resto de los parámetros para el programa
-	glUniform1f(ids["time"], time);
+	//glUniform1f(ids["time"], time);
+	glUniformMatrix4fv(ids["model"], 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(ids["camera"], 1, GL_FALSE, &camera[0][0]);
 	glUniformMatrix4fv(ids["projection"], 1, GL_FALSE, &projection[0][0]);
-
-	glUniform1f(ids["amplitude"], 0.1f);
-	glUniform1f(ids["phase"], time);
-	glUniform1f(ids["frecuency"], 9.0f);
 
 	//Seleccionar la geometria (el triangulo)
 	glBindVertexArray(oPlane.vao);
 
-	//glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_LINE);
+	//Textura
+	glBindTexture(GL_TEXTURE_2D, ids["jeff"]);
+	glUniform1i(ids["texture"], 0);
+	glActiveTexture(GL_TEXTURE0);
 
-	glPolygonMode(GL_FRONT, GL_LINE);
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	//glDraw()
 	int numVertices = oPlane.getNumVertex();

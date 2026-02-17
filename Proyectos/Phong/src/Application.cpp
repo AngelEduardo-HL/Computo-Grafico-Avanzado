@@ -93,7 +93,7 @@ void Application::setup()
 
 void Application::update()
 {
-	time += 0.1f;
+	time += 0.01f;
 
 	// Camara
 	eye = glm::vec3(0.0f, 2.0f, 2.0f);
