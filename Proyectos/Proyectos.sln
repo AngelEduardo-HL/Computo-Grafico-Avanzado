@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ADS", "ADS\ADS.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture", "Texture\Texture.vcxproj", "{C709BB9A-348D-4446-8219-5888FFB18BCA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DoubleTexture", "DoubleTexture\DoubleTexture.vcxproj", "{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x64.Build.0 = Release|x64
 		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x86.ActiveCfg = Release|Win32
 		{C709BB9A-348D-4446-8219-5888FFB18BCA}.Release|x86.Build.0 = Release|Win32
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Debug|x64.ActiveCfg = Debug|x64
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Debug|x64.Build.0 = Debug|x64
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Debug|x86.ActiveCfg = Debug|Win32
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Debug|x86.Build.0 = Debug|Win32
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Release|x64.ActiveCfg = Release|x64
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Release|x64.Build.0 = Release|x64
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Release|x86.ActiveCfg = Release|Win32
+		{C1D24F69-65D3-4706-9632-E0C26E7DF4D3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

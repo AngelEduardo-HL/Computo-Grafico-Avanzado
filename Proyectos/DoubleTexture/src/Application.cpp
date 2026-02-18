@@ -3,7 +3,7 @@
 #include "ShaderFuncs.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
+#include <algorithm>
 
 Application::Application() : oPlane()
 {
@@ -50,6 +50,8 @@ void Application::setupProgram()
 	ids["camera"] = glGetUniformLocation(ids["program"], "camera");
 	ids["projection"] = glGetUniformLocation(ids["program"], "projection");
 	ids["texture"] = glGetUniformLocation(ids["program"], "texture0");
+	ids["texture1"] = glGetUniformLocation(ids["program"], "texture1");
+	ids["mixValue"] = glGetUniformLocation(ids["program"], "mixValue");
 }
 
 GLuint Application::setupTexture(const std::string& path)
@@ -81,6 +83,7 @@ GLuint Application::setupTexture(const std::string& path)
 	return texID;
 }
 
+//Ejercicio: Cargar dos imagenes y que conforme el scroll del mouse se vaya poco a poco mostrando una u otra
 
 void Application::keyCallback(int key, int scancode, int action, int mods)
 {
@@ -90,11 +93,30 @@ void Application::keyCallback(int key, int scancode, int action, int mods)
 	//teclas para mover	
 }
 
+void Application::scrollCallback(double xoffset, double yoffset)
+{
+	if (yoffset > 0)
+	{
+		std::cout << "Yoffset: " << yoffset << std::endl;
+		mixValue += 0.01f;
+		mixValue = std::min(mixValue, 1.0f);
+		std::cout << "Mix Value: " << mixValue << std::endl;
+	}
+	if (yoffset < 1)
+	{
+		std::cout << "Yoffset: " << yoffset << std::endl;
+		mixValue -= 0.01f;
+		mixValue = std::max(mixValue, 0.0f);
+		std::cout << "Mix Value: " << mixValue << std::endl;
+	}
+}
+
 void Application::setup()
 {
 	setupGeometry();
 	setupProgram();
 	ids["jeff"] = setupTexture("Textures/Epstein.png");
+	ids["dora"] = setupTexture("Textures/Dora.png");
 }
 
 void Application::update()
@@ -120,14 +142,20 @@ void Application::draw()
 	glUniformMatrix4fv(ids["model"], 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(ids["camera"], 1, GL_FALSE, &camera[0][0]);
 	glUniformMatrix4fv(ids["projection"], 1, GL_FALSE, &projection[0][0]);
+	glUniform1f(ids["mixValue"], mixValue);
 
 	//Seleccionar la geometria (el triangulo)
 	glBindVertexArray(oPlane.vao);
 
-	//Textura
+	//Textura 1
 	glBindTexture(GL_TEXTURE_2D, ids["jeff"]);
 	glUniform1i(ids["texture"], 0);
 	glActiveTexture(GL_TEXTURE0);
+
+	//Textura 2
+	glBindTexture(GL_TEXTURE_2D, ids["dora"]);
+	glUniform1i(ids["texture1"], 1);
+	glActiveTexture(GL_TEXTURE1);
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_LINE);
