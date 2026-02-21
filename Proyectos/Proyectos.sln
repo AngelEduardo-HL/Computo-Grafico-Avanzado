@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DoubleTexture", "DoubleText
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeightMap", "HeightMap\HeightMap.vcxproj", "{A04FB0B3-4079-4CF7-9A3C-CFECC3ACEF6F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Normals", "Normals\Normals.vcxproj", "{D6D37402-6395-42BA-98BF-F97ACD16EA5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -91,6 +93,14 @@ Global
 		{A04FB0B3-4079-4CF7-9A3C-CFECC3ACEF6F}.Release|x64.Build.0 = Release|x64
 		{A04FB0B3-4079-4CF7-9A3C-CFECC3ACEF6F}.Release|x86.ActiveCfg = Release|Win32
 		{A04FB0B3-4079-4CF7-9A3C-CFECC3ACEF6F}.Release|x86.Build.0 = Release|Win32
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Debug|x64.ActiveCfg = Debug|x64
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Debug|x64.Build.0 = Debug|x64
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Debug|x86.ActiveCfg = Debug|Win32
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Debug|x86.Build.0 = Debug|Win32
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Release|x64.ActiveCfg = Release|x64
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Release|x64.Build.0 = Release|x64
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Release|x86.ActiveCfg = Release|Win32
+		{D6D37402-6395-42BA-98BF-F97ACD16EA5F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
