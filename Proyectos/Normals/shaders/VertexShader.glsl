@@ -8,7 +8,7 @@ uniform mat4 model;
 
 uniform float amplitude;
 uniform float phase;
-uniform float frecuency;
+uniform float frecuency;   // se conserva el nombre del código viejo
 
 struct Light {
     vec3 position;
@@ -55,34 +55,53 @@ vec4 ADS(Light l, Material m, vec3 N, vec3 Ldir, vec3 Vdir)
 //Ejercicio Calcular la normal de la superficie, para esto se necesita calcular la derivada parcial de Y con respecto a X y con respecto a Z y agregar las ondas
 float Func(float x, float z, float amplitude, float phase, float frecuency)
 {
-    return amplitude * sin(frecuency + (x + z) + phase);
+    // Patrón tipo “gota” (radial): depende de x^2 + z^2
+    return amplitude * cos(phase + frecuency * (x * x + z * z));
+}
+
+// Derivadas parciales analíticas para obtener las tangentes (y con eso la normal)
+float DyDx(float x, float z, float amplitude, float phase, float frecuency)
+{
+    // y = A cos(phase + f(x^2+z^2))
+    // dy/dx = -A sin(arg) * (2 f x)
+    float arg = phase + frecuency * (x * x + z * z);
+    return -amplitude * sin(arg) * (2.0 * frecuency * x);
+}
+
+float DyDz(float x, float z, float amplitude, float phase, float frecuency)
+{
+    float arg = phase + frecuency * (x * x + z * z);
+    return -amplitude * sin(arg) * (2.0 * frecuency * z);
 }
 
 void main()
 {
     //Obtener geometria que queremos
     mat4 modelView = camera * model; // matriz de modelo-vista
-    vec4 newPosition = model * vPosition; // posicion del vertice en el espacio del mundo
-    vec4 posVS = camera * newPosition; // posicion del vertice en el espacio de vista
+
+    // Ahora primero hacemos la ondulación en espacio objeto y luego transformamos correctamente.
+    vec4 newPosition = vPosition; // posicion del vertice en el espacio objeto
+    newPosition.y = Func(newPosition.x, newPosition.z, amplitude, phase, frecuency); // agregar las ondas a la posicion del vertice
+
+    vec4 posVS = modelView * newPosition; // posicion del vertice en el espacio de vista
 
     //Calculamos la normal de la superficie con las ondas
-    vec3 Vtz = vec3(newPosition.x, Func(newPosition.x, newPosition.z + 0.01, amplitude, phase, frecuency), newPosition.z + 0.01); // posicion del vertice con las ondas en Z
-    vec3 Vtx = vec3(newPosition.x + 0.01, Func(newPosition.x + 0.01, newPosition.z, amplitude, phase, frecuency), newPosition.z); // posicion del vertice con las ondas en X
+    vec3 Vtx = vec3(1.0, DyDx(vPosition.x, vPosition.z, amplitude, phase, frecuency), 0.0); // vector tangente en X
+    vec3 Vtz = vec3(0.0, DyDz(vPosition.x, vPosition.z, amplitude, phase, frecuency), 1.0); // vector tangente en Z
 
-    vec3 normal = cross(Vtz - newPosition.xyz, Vtx - newPosition.xyz); // normal de la superficie sin normalizar
+    vec3 normal = normalize(cross(Vtz, Vtx)); // normal de la superficie
 
     //Ahora aplicamos transformaciones
     mat4 matForNormal = transpose(inverse(modelView)); // matriz para transformar normales
     vec3 newNormal = normalize((matForNormal * vec4(normal, 0.0)).xyz); // normal transformada y normalizada
-    newPosition.y = Func(newPosition.x, newPosition.z, amplitude, phase, frecuency); // agregar las ondas a la posicion del vertice
 
     //Calcular la iluminacion
-    vec3 lightPosVS = (camera * vec4(light.position, 1.0)).xyz; // posicion de la luz en el espacio de vista
-    vec3 Ldir = normalize(lightPosVS - posVS.xyz); // direccion de la luz (desde el punto a la luz)
-    vec3 Vdir = normalize(-posVS.xyz); // direccion de la vista (desde el punto a la camara)
+    vec3 lightPosVS = (camera * vec4(light.position, 1.0)).xyz;
+    vec3 Ldir = normalize(lightPosVS - posVS.xyz);
+    vec3 Vdir = normalize(-posVS.xyz);
 
     //Calculamos el ADS con todo ya transformado
     outColor = ADS(light, material, newNormal, Ldir, Vdir);
 
-    gl_Position = projection * posVS; // posicion final del vertice en el espacio de recorte
+    gl_Position = projection * posVS;
 }

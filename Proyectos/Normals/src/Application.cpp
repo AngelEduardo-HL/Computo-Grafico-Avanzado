@@ -44,7 +44,7 @@ void Application::setupProgram()
 	//Ondas
 	ids["amplitude"] = glGetUniformLocation(ids["program"], "amplitude");
 	ids["phase"] = glGetUniformLocation(ids["program"], "phase");
-	ids["frequency"] = glGetUniformLocation(ids["program"], "frequency");
+	ids["frequency"] = glGetUniformLocation(ids["program"], "frecuency");
 
 	// Matrices
 	ids["camera"] = glGetUniformLocation(ids["program"], "camera");
@@ -129,7 +129,7 @@ void Application::draw()
 	glUniform1i(ids["material.shininess"], material.shininess);
 
 	// Ondas
-	glUniform1f(ids["amplitude"], 0.5f);
+	glUniform1f(ids["amplitude"], 0.1f);
 	glUniform1f(ids["phase"], time);
 	glUniform1f(ids["frequency"], 9.0f);
 
