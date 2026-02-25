@@ -8,7 +8,7 @@ uniform mat4 model;
 
 uniform float amplitude;
 uniform float phase;
-uniform float frecuency;   // se conserva el nombre del código viejo
+uniform float frecuency;
 
 struct Light {
     vec3 position;
@@ -59,7 +59,6 @@ float Func(float x, float z, float amplitude, float phase, float frecuency)
     return amplitude * cos(phase + frecuency * (x * x + z * z));
 }
 
-// Derivadas parciales analíticas para obtener las tangentes (y con eso la normal)
 float DyDx(float x, float z, float amplitude, float phase, float frecuency)
 {
     // y = A cos(phase + f(x^2+z^2))

@@ -19,6 +19,7 @@ private:
 
 	void setupGeometry();
 	void setupProgram();
+	void setupProgram2();
 	float time{ 0.0f };
 	glm::mat4 camera;
 	glm::mat4 projection;
