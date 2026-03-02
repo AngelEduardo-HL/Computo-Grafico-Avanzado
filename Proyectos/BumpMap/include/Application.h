@@ -19,6 +19,10 @@ private:
 
 	void setupGeometry();
 	void setupProgram();
+	GLuint setupTexture(const std::string& path);
+	GLuint texColorID = 0;
+	GLuint texNormalID = 0;
+
 	float time{ 0.0f };
 	glm::mat4 camera;
 	glm::mat4 projection;
@@ -26,6 +30,12 @@ private:
 	glm::vec3 center{0.1f, 0.1f, 0.5f};
 
 	glm::mat4 model{ 1.0f };
+
+	//Mouse rotation
+	bool dragging{ false };
+	double lastX{ 0.0 }, lastY{ 0.0 };
+	float rotX{ -0.7f };
+	float rotY{ 0.6f };
 
 	typedef struct 
 	{
@@ -58,4 +68,8 @@ public:
 	void update();
 	void draw();
 	void keyCallback(int key, int scancode, int action, int mods);
+	void scrollCallback(double xoffset, double yoffset);
+
+	void mouseButtonCallback(int button, int action, int mods);
+	void cursorPosCallback(double xpos, double ypos);
 };

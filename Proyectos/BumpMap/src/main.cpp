@@ -9,6 +9,21 @@ void MiCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     app.keyCallback(key, scancode, action, mods);
 }
 
+void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    app.scrollCallback(xoffset, yoffset);
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    app.mouseButtonCallback(button, action, mods);
+}
+
+void cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    app.cursorPosCallback(xpos, ypos);
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -48,6 +63,9 @@ int main(void)
 
     //seccion de asignacion de callbacks
     glfwSetKeyCallback(app.window, MiCallback);
+	glfwSetScrollCallback(app.window, ScrollCallback);
+	glfwSetMouseButtonCallback(app.window, mouseButtonCallback);
+	glfwSetCursorPosCallback(app.window, cursorPosCallback);
     glfwSetFramebufferSizeCallback(app.window, framebuffer_size_callback);
 
 

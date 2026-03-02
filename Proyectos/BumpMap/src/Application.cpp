@@ -2,6 +2,9 @@
 #include <iostream>
 #include "ShaderFuncs.h"
 #include "glm/gtc/type_ptr.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 
 Application::Application() : oPlane()
 {
@@ -57,7 +60,42 @@ void Application::setupProgram()
 	ids["material.ambient"] = glGetUniformLocation(ids["program"], "material.ambient");
 	ids["material.diffuse"] = glGetUniformLocation(ids["program"], "material.diffuse");
 	ids["material.specular"] = glGetUniformLocation(ids["program"], "material.specular");
-	ids["material.shininess"] = glGetUniformLocation(ids["program"], "material.shininess"); // NUEVO
+	ids["material.shininess"] = glGetUniformLocation(ids["program"], "material.shininess");
+
+	//Texture
+	ids["colorMap"] = glGetUniformLocation(ids["program"], "colorMap");
+	ids["normalMap"] = glGetUniformLocation(ids["program"], "normalMap");
+}
+
+GLuint Application::setupTexture(const std::string& path)
+{
+	int width, height, channels;
+	unsigned char* img = stbi_load(path.c_str(), &width, &height, &channels, 4);
+	if (img == nullptr)
+	{
+		std::cerr << "Error loading texture: " << path << std::endl;
+		return 0;
+	}
+
+	GLuint texID = 0;
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+		0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+
+	stbi_image_free(img);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texID;
 }
 
 void Application::keyCallback(int key, int scancode, int action, int mods)
@@ -66,6 +104,53 @@ void Application::keyCallback(int key, int scancode, int action, int mods)
 		glfwSetWindowShouldClose(window, true);
 
 	//teclas para mover	
+}
+
+void Application::scrollCallback(double xoffset, double yoffset)
+{
+	if (yoffset > 0)
+	{
+		eye += 0.5f * (center - eye);
+	}
+	else if (yoffset < 0)
+	{
+		eye -= 0.5f * (center - eye);
+	}
+}
+
+void Application::mouseButtonCallback(int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		if (action == GLFW_PRESS)
+		{
+			dragging = true;
+			glfwGetCursorPos(window, &lastX, &lastY);
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			dragging = false;
+		}
+	}
+}
+
+void Application::cursorPosCallback(double xpos, double ypos)
+{
+	if (!dragging) return;
+
+	double dx = xpos - lastX;
+	double dy = ypos - lastY;
+
+	lastX = xpos;
+	lastY = ypos;
+
+	// Sensibilidad
+	rotY += (float)(dx * 0.005);
+	rotX += (float)(dy * 0.005);
+
+	// Limitar inclinación
+	rotX = std::min(rotX, 1.5f);
+	rotX = std::max(rotX, -1.5f);
 }
 
 void Application::setup()
@@ -89,6 +174,10 @@ void Application::setup()
 
 	// Matriz del modelo
 	model = glm::mat4(1.0f);
+
+	// Texturas
+	texColorID = setupTexture("Textures/Rocks_Color.png");
+	texNormalID = setupTexture("Textures/Rocks_Normal.png");
 }
 
 void Application::update()
@@ -127,8 +216,19 @@ void Application::draw()
 
 	glBindVertexArray(oPlane.vao);
 
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_FILL);
+	//Texturas
+	glUniform1i(ids["colorMap"], 0);
+	glUniform1i(ids["normalMap"], 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texColorID);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texNormalID);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glDrawArrays(GL_TRIANGLES, 0, oPlane.getNumVertex());
 }
