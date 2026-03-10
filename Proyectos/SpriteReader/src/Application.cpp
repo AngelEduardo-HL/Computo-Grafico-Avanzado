@@ -3,7 +3,6 @@
 #include "ShaderFuncs.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include <algorithm>
 
 Application::Application() : oPlane()
 {
@@ -11,205 +10,261 @@ Application::Application() : oPlane()
 
 void Application::setupGeometry()
 {
-	oPlane.createPlane(1);
+    oPlane.createPlane(1);
 
-	glGenVertexArrays(1, &oPlane.vao);
-	glBindVertexArray(oPlane.vao);
+    glGenVertexArrays(1, &oPlane.vao);
+    glBindVertexArray(oPlane.vao);
 
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	glBufferData(GL_ARRAY_BUFFER,
-		oPlane.getVertexSizeInBytes() + oPlane.getTextureCoordsSizeInBytes(),
-		NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+        oPlane.getVertexSizeInBytes() + oPlane.getTextureCoordsSizeInBytes(),
+        NULL,
+        GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, oPlane.getVertexSizeInBytes(), oPlane.plane);
+    glBufferSubData(GL_ARRAY_BUFFER, 0,
+        oPlane.getVertexSizeInBytes(), oPlane.plane);
 
-	glBufferSubData(GL_ARRAY_BUFFER, oPlane.getVertexSizeInBytes(),
-		oPlane.getTextureCoordsSizeInBytes(), oPlane.textureCoords);
+    glBufferSubData(GL_ARRAY_BUFFER, oPlane.getVertexSizeInBytes(),
+        oPlane.getTextureCoordsSizeInBytes(), oPlane.textureCoords);
 
-	oPlane.cleanMemory();
+    oPlane.cleanMemory();
 
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(oPlane.getVertexSizeInBytes()));
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,
+        (void*)(oPlane.getVertexSizeInBytes()));
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void Application::setupProgram()
 {
-	std::string vertexShader = loadTextFile("shaders/VertexTexture.glsl");
-	std::string fragmentShader = loadTextFile("shaders/FragmentTexture.glsl");
-	ids["program"] = InitializeProgram(vertexShader, fragmentShader);
+    std::string vertexShader = loadTextFile("shaders/VertexTexture.glsl");
+    std::string fragmentShader = loadTextFile("shaders/FragmentTexture.glsl");
+    ids["program"] = InitializeProgram(vertexShader, fragmentShader);
 
-	ids["model"] = glGetUniformLocation(ids["program"], "model");
-	ids["camera"] = glGetUniformLocation(ids["program"], "camera");
-	ids["projection"] = glGetUniformLocation(ids["program"], "projection");
+    ids["model"] = glGetUniformLocation(ids["program"], "model");
+    ids["camera"] = glGetUniformLocation(ids["program"], "camera");
+    ids["projection"] = glGetUniformLocation(ids["program"], "projection");
+    ids["texture"] = glGetUniformLocation(ids["program"], "texture0");
 
-	ids["texture"] = glGetUniformLocation(ids["program"], "texture0");
-	ids["frameOffset"] = glGetUniformLocation(ids["program"], "uFrameOffset");
-	ids["frameScale"] = glGetUniformLocation(ids["program"], "uFrameScale");
+    ids["uvOffset"] = glGetUniformLocation(ids["program"], "uvOffset");
+    ids["uvScale"] = glGetUniformLocation(ids["program"], "uvScale");
 }
 
 GLuint Application::setupTexture(const std::string& path)
 {
-	int width, height, channels;
+    int width, height, channels;
 
-	stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* img = stbi_load(path.c_str(), &width, &height, &channels, 4);
 
-	unsigned char* img = stbi_load(path.c_str(), &width, &height, &channels, 4);
-	if (img == nullptr)
-	{
-		std::cerr << "Error loading texture: " << path << std::endl;
-		return (GLuint)-1;
-	}
+    if (img == nullptr)
+    {
+        std::cerr << "Error loading texture: " << path << std::endl;
+        return 0;
+    }
 
-	GLuint texID = 0;
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
+    GLuint texID = 0;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, img);
 
-	stbi_image_free(img);
+    stbi_image_free(img);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Para pixel art conviene NEAREST
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	return texID;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return texID;
 }
 
 void Application::keyCallback(int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 
-	// --- SpriteSheet input ---
-	if (key == GLFW_KEY_A)
-	{
-		if (action == GLFW_PRESS) { keyA = true; stepA = true; }
-		if (action == GLFW_RELEASE) { keyA = false; }
-	}
+    bool pressed = (action == GLFW_PRESS || action == GLFW_REPEAT);
+    bool released = (action == GLFW_RELEASE);
 
-	if (key == GLFW_KEY_D)
-	{
-		if (action == GLFW_PRESS) { keyD = true; stepD = true; }
-		if (action == GLFW_RELEASE) { keyD = false; }
-	}
+    if (key == GLFW_KEY_A)
+    {
+        if (pressed) keyA = true;
+        if (released) keyA = false;
+    }
 
-	if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT)
-	{
-		if (action == GLFW_PRESS) { keyShift = true; }
-		if (action == GLFW_RELEASE) { keyShift = false; }
-	}
-}
+    if (key == GLFW_KEY_D)
+    {
+        if (pressed) keyD = true;
+        if (released) keyD = false;
+    }
 
-void Application::scrollCallback(double xoffset, double yoffset)
-{
+    if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT)
+    {
+        if (pressed) keyShift = true;
+        if (released) keyShift = false;
+    }
 }
 
 void Application::setup()
 {
-	setupGeometry();
-	setupProgram();
+    setupGeometry();
+    setupProgram();
 
-	spriteTex = setupTexture("Textures/SpriteSheet.png");
+    // Sustituye esta textura por tu sprite sheet corregido
+    ids["jeff"] = setupTexture("Textures/SpriteSheet.png");
 
-	if (spriteTex == (GLuint)-1)
-		spriteTex = setupTexture("SpriteSheet.png");
+    // Estado inicial: idle
+    currentState = State::Idle;
+    previousState = State::Idle;
+    currentFrame = 0;
+    currentRow = 0;
+    currentFrameCount = framesPerRow[0];
+    currentFPS = fpsIdle;
 
-	int w, h, c;
-	unsigned char* tmp = stbi_load("Textures/SpriteSheet.png", &w, &h, &c, 4);
-	if (!tmp) tmp = stbi_load("SpriteSheet.png", &w, &h, &c, 4);
+    updateSpriteUV();
+}
 
-	if (tmp)
-	{
-		sheetW = w; sheetH = h;
-		stbi_image_free(tmp);
-	}
+void Application::updateState()
+{
+    previousState = currentState;
 
-	cols = std::max(1, sheetW / frameW);
-	rows = std::max(1, sheetH / frameH);
+    if (keyD)
+    {
+        if (keyShift)
+            currentState = State::RunForward;
+        else
+            currentState = State::WalkForward;
+    }
+    else if (keyA)
+    {
+        currentState = State::WalkBackward;
+    }
+    else
+    {
+        currentState = State::Idle;
+    }
+
+    if (currentState != previousState)
+    {
+        currentFrame = 0;
+        animationTimer = 0.0f;
+
+        switch (currentState)
+        {
+        case State::Idle:
+            currentRow = 0;
+            currentFrameCount = framesPerRow[0];
+            currentFPS = fpsIdle;
+            break;
+
+        case State::WalkForward:
+            currentRow = 1;
+            currentFrameCount = framesPerRow[1];
+            currentFPS = fpsWalk;
+            break;
+
+        case State::RunForward:
+            currentRow = 2;
+            currentFrameCount = framesPerRow[2];
+            currentFPS = fpsRun;
+            break;
+
+        case State::WalkBackward:
+            currentRow = 3;
+            currentFrameCount = framesPerRow[3];
+            currentFPS = fpsWalk;
+            break;
+        }
+    }
+}
+
+void Application::updateAnimation(float deltaTime)
+{
+    animationTimer += deltaTime;
+
+    float frameDuration = 1.0f / currentFPS;
+
+    while (animationTimer >= frameDuration)
+    {
+        animationTimer -= frameDuration;
+        currentFrame++;
+
+        if (currentFrame >= currentFrameCount)
+            currentFrame = 0;
+    }
+}
+
+void Application::updateSpriteUV()
+{
+    uvScale.x = frameWidthPx / textureWidthPx;
+    uvScale.y = frameHeightPx / textureHeightPx;
+
+    uvOffset.x = (currentFrame * frameWidthPx) / textureWidthPx;
+    uvOffset.y = 1.0f - ((currentRow + 1) * frameHeightPx) / textureHeightPx;
 }
 
 void Application::update()
 {
-	float dt = 1.0f / 60.0f;
-	time += dt;
+    float currentTime = (float)glfwGetTime();
+    float deltaTime = currentTime - lastFrameTime;
+    lastFrameTime = currentTime;
 
-	eye = glm::vec3(0.0f, 2.0f + cos(time), 2.0f + cos(time));
-	center = glm::vec3(0.01f, 0.01f, 0.01f);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    time += deltaTime;
 
-	camera = glm::lookAt(eye, center, up);
+    updateState();
+    updateAnimation(deltaTime);
+    updateSpriteUV();
 
-	model = glm::identity<glm::mat4>();
-	projection = glm::perspective(glm::radians(45.0f), (1024.0f / 768.0f), 0.1f, 100.0f);
+	eye = glm::vec3(0.0f, 3.0f, 2.0f);
+    center = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	// --- SpriteSheet logic ---
-	if (keyD && !keyA) currentRow = 0;
-	if (keyA && !keyD) currentRow = 1;
+    camera = glm::lookAt(eye, center, up);
 
-	bool play = keyShift && (keyA || keyD);
-	if (play)
-	{
-		animTimer += dt;
-		float spf = 1.0f / std::max(1.0f, animFPS);
+    model = glm::identity<glm::mat4>();
+    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		if (animTimer >= spf)
-		{
-			animTimer = 0.0f;
-			frame = (frame + 1) % cols;
-		}
-	}
-
-	if (!keyShift)
-	{
-		if (stepD) { currentRow = 0; frame = (frame + 1) % cols; stepD = false; }
-		if (stepA) { currentRow = 1; frame = (frame + 1) % cols; stepA = false; }
-	}
+    projection = glm::perspective(
+        glm::radians(45.0f),
+        (1024.0f / 768.0f),
+        0.1f,
+        100.0f
+    );
 }
 
 void Application::draw()
 {
-	glUseProgram(ids["program"]);
+    glUseProgram(ids["program"]);
 
-	glUniformMatrix4fv(ids["model"], 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(ids["camera"], 1, GL_FALSE, &camera[0][0]);
-	glUniformMatrix4fv(ids["projection"], 1, GL_FALSE, &projection[0][0]);
+    glUniformMatrix4fv(ids["model"], 1, GL_FALSE, &model[0][0]);
+    glUniformMatrix4fv(ids["camera"], 1, GL_FALSE, &camera[0][0]);
+    glUniformMatrix4fv(ids["projection"], 1, GL_FALSE, &projection[0][0]);
 
-	glm::vec2 scale(
-		(sheetW > 0) ? (float)frameW / (float)sheetW : 1.0f,
-		(sheetH > 0) ? (float)frameH / (float)sheetH : 1.0f
-	);
+    glUniform2f(ids["uvOffset"], uvOffset.x, uvOffset.y);
+    glUniform2f(ids["uvScale"], uvScale.x, uvScale.y);
 
-	glm::vec2 offset(
-		(float)frame * scale.x,
-		(float)currentRow * scale.y
-	);
+    glBindVertexArray(oPlane.vao);
 
-	glUniform2f(ids["frameScale"], scale.x, scale.y);
-	glUniform2f(ids["frameOffset"], offset.x, offset.y);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, ids["jeff"]);
+    glUniform1i(ids["texture"], 0);
 
-	glBindVertexArray(oPlane.vao);
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glPolygonMode(GL_BACK, GL_LINE);
 
-	// SpriteSheet
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, spriteTex);
-	glUniform1i(ids["texture"], 0);
-
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_LINE);
-
-	glDrawArrays(GL_TRIANGLES, 0, oPlane.getNumVertex());
+    glDrawArrays(GL_TRIANGLES, 0, oPlane.getNumVertex());
 }

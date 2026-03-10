@@ -11,46 +11,68 @@
 class Application
 {
 private:
+    std::map<std::string, GLuint> ids;
+    Plane oPlane;
 
-	std::map<std::string, GLuint> ids;
-	Plane oPlane;
+    void setupGeometry();
+    void setupProgram();
+    GLuint setupTexture(const std::string& path);
 
-	void setupGeometry();
-	void setupProgram();
-	GLuint setupTexture(const std::string& path);
+    void updateState();
+    void updateAnimation(float deltaTime);
+    void updateSpriteUV();
 
-	// --- SpriteSheet ---
-	GLuint spriteTex{ 0 };
-	int sheetW{ 0 }, sheetH{ 0 };
-	const int frameW{ 35 };
-	const int frameH{ 55 };
-	int cols{ 1 }, rows{ 1 };
-	int frame{ 0 };
-	int currentRow{ 0 };
-	float animTimer{ 0.0f };
-	float animFPS{ 12.0f };
+    float time{ 0.0f };
+    float lastFrameTime{ 0.0f };
+    float animationTimer{ 0.0f };
 
-	bool keyA{ false }, keyD{ false }, keyShift{ false };
-	bool stepA{ false }, stepD{ false };
+    glm::mat4 model;
+    glm::mat4 camera;
+    glm::mat4 projection;
+    glm::vec3 eye{ 0.0f, 2.0f, 2.0f };
+    glm::vec3 center{ 0.0f, 0.0f, 0.0f };
 
-	float time{ 0.0f };
-	float mixValue{ 0.0f };
+    bool keyA{ false };
+    bool keyD{ false };
+    bool keyShift{ false };
 
-	glm::mat4 model;
-	glm::mat4 camera;
-	glm::mat4 projection;
+    enum class State
+    {
+        Idle,
+        WalkForward,
+        RunForward,
+        WalkBackward
+    };
 
-	glm::vec3 eye{ 0.0f, 0.0f, 2.0f };
-	glm::vec3 center{ 0.1f, 0.1f, 0.5f };
+    State currentState{ State::Idle };
+    State previousState{ State::Idle };
+
+    // Sprite sheet organizado en celdas de 55x50
+    const float frameWidthPx = 55.0f;
+    const float frameHeightPx = 50.0f;
+    const float textureWidthPx = 990.0f;   // 18 * 55
+    const float textureHeightPx = 200.0f;  // 4 * 50
+
+    int currentFrame{ 0 };
+    int currentRow{ 0 };
+    int currentFrameCount{ 8 };
+
+    float fpsIdle{ 8.0f };
+    float fpsWalk{ 12.0f };
+    float fpsRun{ 16.0f };
+    float currentFPS{ 8.0f };
+
+    int framesPerRow[4] = { 8, 18, 18, 18 };
+
+    glm::vec2 uvOffset{ 0.0f, 0.0f };
+    glm::vec2 uvScale{ 1.0f, 1.0f };
 
 public:
-	Application();
-	GLFWwindow* window;
+    Application();
+    GLFWwindow* window{ nullptr };
 
-	void setup();
-	void update();
-	void draw();
-
-	void keyCallback(int key, int scancode, int action, int mods);
-	void scrollCallback(double xoffset, double yoffset);
+    void setup();
+    void update();
+    void draw();
+    void keyCallback(int key, int scancode, int action, int mods);
 };

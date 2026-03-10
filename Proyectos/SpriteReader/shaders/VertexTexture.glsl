@@ -7,14 +7,13 @@ uniform mat4 model;
 uniform mat4 camera;
 uniform mat4 projection;
 
-// SpriteSheet
-uniform vec2 uFrameOffset;
-uniform vec2 uFrameScale;
+uniform vec2 uvOffset;
+uniform vec2 uvScale;
 
 out vec2 texCoord;
 
 void main ()
 {
-	texCoord = vTexCoord * uFrameScale + uFrameOffset;
-	gl_Position = projection * camera * model * vPosition;
+    texCoord = uvOffset + (vTexCoord * uvScale);
+    gl_Position = projection * camera * model * vPosition;
 }

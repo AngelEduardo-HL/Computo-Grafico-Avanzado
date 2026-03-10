@@ -3,9 +3,14 @@
 in vec2 texCoord;
 out vec4 outColor;
 
-uniform sampler2D texture0; // The texture sampler for the sprite sheet
+uniform sampler2D texture0;
 
 void main ()
 {
-	outColor = texture(texture0, texCoord);
+    vec4 color = texture(texture0, texCoord);
+
+    if (color.a < 0.1)
+        discard;
+
+    outColor = color;
 }
