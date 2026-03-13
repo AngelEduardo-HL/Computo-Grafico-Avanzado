@@ -9,7 +9,7 @@ void main ()
 {
     vec4 color = texture(texture0, texCoord);
 
-    if (color.a < 0.1)
+    if (color.a < 0.1) //Decarta el fragmento si no hay color o es transparente
         discard;
 
     outColor = color;

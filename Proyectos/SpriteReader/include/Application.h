@@ -20,7 +20,7 @@ private:
 
     void updateState();
     void updateAnimation(float deltaTime);
-    void updateSpriteUV();
+    void updateSprite();
 
     float time{ 0.0f };
     float lastFrameTime{ 0.0f };
@@ -47,7 +47,7 @@ private:
     State currentState{ State::Idle };
     State previousState{ State::Idle };
 
-    // Sprite sheet organizado en celdas de 55x50
+    // Sprite sheet
     const float frameWidthPx = 55.0f;
     const float frameHeightPx = 50.0f;
     const float textureWidthPx = 990.0f;   // 18 * 55
@@ -64,8 +64,8 @@ private:
 
     int framesPerRow[4] = { 8, 18, 18, 18 };
 
-    glm::vec2 uvOffset{ 0.0f, 0.0f };
-    glm::vec2 uvScale{ 1.0f, 1.0f };
+    glm::vec2 texOffset{ 0.0f, 0.0f };
+    glm::vec2 texScale{ 1.0f, 1.0f };
 
 public:
     Application();

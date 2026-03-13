@@ -55,8 +55,8 @@ void Application::setupProgram()
     ids["projection"] = glGetUniformLocation(ids["program"], "projection");
     ids["texture"] = glGetUniformLocation(ids["program"], "texture0");
 
-    ids["uvOffset"] = glGetUniformLocation(ids["program"], "uvOffset");
-    ids["uvScale"] = glGetUniformLocation(ids["program"], "uvScale");
+    ids["texOffset"] = glGetUniformLocation(ids["program"], "texOffset");
+    ids["texScale"] = glGetUniformLocation(ids["program"], "texScale");
 }
 
 GLuint Application::setupTexture(const std::string& path)
@@ -124,8 +124,7 @@ void Application::setup()
     setupGeometry();
     setupProgram();
 
-    // Sustituye esta textura por tu sprite sheet corregido
-    ids["jeff"] = setupTexture("Textures/SpriteSheet.png");
+    ids["Sprite"] = setupTexture("Textures/SpriteSheet.png");
 
     // Estado inicial: idle
     currentState = State::Idle;
@@ -135,21 +134,21 @@ void Application::setup()
     currentFrameCount = framesPerRow[0];
     currentFPS = fpsIdle;
 
-    updateSpriteUV();
+    updateSprite();
 }
 
 void Application::updateState()
 {
     previousState = currentState;
 
-    if (keyD)
+    if (keyA)
     {
         if (keyShift)
             currentState = State::RunForward;
         else
             currentState = State::WalkForward;
     }
-    else if (keyA)
+    else if (keyD)
     {
         currentState = State::WalkBackward;
     }
@@ -208,13 +207,13 @@ void Application::updateAnimation(float deltaTime)
     }
 }
 
-void Application::updateSpriteUV()
+void Application::updateSprite()
 {
-    uvScale.x = frameWidthPx / textureWidthPx;
-    uvScale.y = frameHeightPx / textureHeightPx;
+    texScale.x = frameWidthPx / textureWidthPx; //Saca el ancho del cuadro
+	texScale.y = frameHeightPx / textureHeightPx; //Saca el alto del cuadro
 
-    uvOffset.x = (currentFrame * frameWidthPx) / textureWidthPx;
-    uvOffset.y = 1.0f - ((currentRow + 1) * frameHeightPx) / textureHeightPx;
+	texOffset.x = (currentFrame * frameWidthPx) / textureWidthPx;//Saca el desplazamiento horizontal del cuadro
+	texOffset.y = 1.0f - ((currentRow + 1) * frameHeightPx) / textureHeightPx; //Saca el desplazamiento vertical del cuadro
 }
 
 void Application::update()
@@ -227,7 +226,7 @@ void Application::update()
 
     updateState();
     updateAnimation(deltaTime);
-    updateSpriteUV();
+    updateSprite();
 
 	eye = glm::vec3(0.0f, 3.0f, 2.0f);
     center = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -254,13 +253,13 @@ void Application::draw()
     glUniformMatrix4fv(ids["camera"], 1, GL_FALSE, &camera[0][0]);
     glUniformMatrix4fv(ids["projection"], 1, GL_FALSE, &projection[0][0]);
 
-    glUniform2f(ids["uvOffset"], uvOffset.x, uvOffset.y);
-    glUniform2f(ids["uvScale"], uvScale.x, uvScale.y);
+    glUniform2f(ids["texOffset"], texOffset.x, texOffset.y);
+    glUniform2f(ids["texScale"], texScale.x, texScale.y);
 
     glBindVertexArray(oPlane.vao);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ids["jeff"]);
+    glBindTexture(GL_TEXTURE_2D, ids["Sprite"]);
     glUniform1i(ids["texture"], 0);
 
     glPolygonMode(GL_FRONT, GL_FILL);

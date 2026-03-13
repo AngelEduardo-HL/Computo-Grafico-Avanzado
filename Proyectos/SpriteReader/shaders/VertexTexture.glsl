@@ -7,13 +7,13 @@ uniform mat4 model;
 uniform mat4 camera;
 uniform mat4 projection;
 
-uniform vec2 uvOffset;
-uniform vec2 uvScale;
+uniform vec2 texOffset;
+uniform vec2 texScale;
 
 out vec2 texCoord;
 
 void main ()
 {
-    texCoord = uvOffset + (vTexCoord * uvScale);
+    texCoord = texOffset + (vTexCoord * texScale); 
     gl_Position = projection * camera * model * vPosition;
 }

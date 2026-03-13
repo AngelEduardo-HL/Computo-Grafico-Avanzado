@@ -24,6 +24,7 @@
     <ProjectGuid>{d049e95f-d8c7-4dbd-b0ee-cb2d6af93949}</ProjectGuid>
     <RootNamespace>SpriteReader</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SpriteSheet</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
