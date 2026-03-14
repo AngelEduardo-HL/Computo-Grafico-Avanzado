@@ -3,6 +3,8 @@
 #include "ShaderFuncs.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <chrono>
+std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 
 Application::Application() : oPlane()
 {

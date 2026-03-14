@@ -7,7 +7,7 @@ uniform mat4 model;
 uniform mat4 camera;
 uniform mat4 projection;
 
-uniform vec2 texOffset;
+uniform vec2 texOffset; // Es el Ddesplazamiento de textura
 uniform vec2 texScale;
 
 out vec2 texCoord;

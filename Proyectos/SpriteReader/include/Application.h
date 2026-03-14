@@ -58,11 +58,11 @@ private:
     int currentFrameCount{ 8 };
 
     float fpsIdle{ 8.0f };
-    float fpsWalk{ 12.0f };
-    float fpsRun{ 16.0f };
+    float fpsWalk{ 11.0f };
+    float fpsRun{ 18.0f };
     float currentFPS{ 8.0f };
 
-    int framesPerRow[4] = { 8, 18, 18, 18 };
+    int framesPerRow[4] = { 8, 16, 16, 16 };
 
     glm::vec2 texOffset{ 0.0f, 0.0f };
     glm::vec2 texScale{ 1.0f, 1.0f };
